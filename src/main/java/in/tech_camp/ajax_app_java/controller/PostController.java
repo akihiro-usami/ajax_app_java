@@ -15,26 +15,22 @@ import lombok.AllArgsConstructor;
 @AllArgsConstructor
 public class PostController {
 
-  private final PostRepository postRepository;
+    private final PostRepository postRepository;
 
-  @GetMapping("/")
-  public String showList(Model model) {
-    var postList = postRepository.findAll();
-    model.addAttribute("postList", postList);
-    return "posts/index";
-  }
+    @GetMapping("/")
+    public String showList(Model model) {
+        var postList = postRepository.findAll();
+        model.addAttribute("postList", postList);
+        model.addAttribute("postForm", new PostForm());
+        return "posts/index";
+    }
 
-  @GetMapping("/postForm")
-  public String showPostForm(@ModelAttribute("postForm") PostForm form){
-      return "posts/postForm";
-  }
+    @PostMapping("/posts")
+    public String savePost(@ModelAttribute("postForm") PostForm form) {
+        PostEntity post = new PostEntity();
+        post.setContent(form.getContent());
+        postRepository.insert(post);
+        return "redirect:/";
+    }
 
-  @PostMapping("/posts")
-  public String savePost(@ModelAttribute("postForm") PostForm form){
-    PostEntity post = new PostEntity();
-    post.setContent(form.getContent());
-    postRepository.insert(post);
-    return "redirect:/";
-  }
-  
 }
